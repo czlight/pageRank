@@ -10,11 +10,21 @@ SAMPLES = 10000
 def main():
     if len(sys.argv) != 2:
         sys.exit("Usage: python pagerank.py corpus")
+    # crawl function parses html files in directory and returns
+    # a dictionary representing the corpus. Keys represent pages
+    # and values area a set of all the pages linked to by the key
+    # e.g., {"1.html": {"2.html" , "3.html"}} means page 1 links to pages 2 & 3
     corpus = crawl(sys.argv[1])
+
+    # sample_pagerank function's purpose is to estimate PageRank of each page by sampling
+    # returns a dictionary where keys are page name and values are page's PageRank(0 - 1)
     ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
     print(f"PageRank Results from Sampling (n = {SAMPLES})")
     for page in sorted(ranks):
         print(f"  {page}: {ranks[page]:.4f}")
+
+    # iterate_pagerank calculates PageRank but using the iterative formula
+    # method instead of sampling. return format is same as dict sample_pagerank function
     ranks = iterate_pagerank(corpus, DAMPING)
     print(f"PageRank Results from Iteration")
     for page in sorted(ranks):
@@ -57,7 +67,16 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    raise NotImplementedError
+    # initialize empty dictionary
+    probabilities = dict()
+
+    for page in corpus:
+        if not corpus[page]:
+            # page has no outgoing links
+            # return all pages in corpus with equal probability
+            for file in corpus:
+                probabilities[file] = 1 / len(corpus)
+
 
 
 def sample_pagerank(corpus, damping_factor, n):
