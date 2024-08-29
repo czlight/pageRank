@@ -2,6 +2,7 @@ import os
 import random
 import re
 import sys
+from collections import Counter
 
 DAMPING = 0.85
 SAMPLES = 10000
@@ -70,12 +71,38 @@ def transition_model(corpus, page, damping_factor):
     # initialize empty dictionary
     probabilities = dict()
 
-    for page in corpus:
+    if page in corpus:
+        print("outer loop page is", page)
+        print("outer loop corpus is ", corpus)
         if not corpus[page]:
+            print("not corpus[page] (i.e., no outgoing links for page: ", page)
             # page has no outgoing links
             # return all pages in corpus with equal probability
+            # tested and works as expected!!
             for file in corpus:
                 probabilities[file] = 1 / len(corpus)
+                probabilities[file] = round(probabilities[file], 6)
+            return(probabilities)
+
+    # for each outgoing link, make probability damping factor / (1 - len(corpus))
+    # PLUS 1 - damping factor / len(corpus)
+    for file in corpus:
+        print("page is", page)
+        print("corpus is ", corpus)
+        print("corpus[file] is:", corpus[file])
+        probabilities[file] = (1 - damping_factor) / len(corpus)
+        probabilities[file] = round(probabilities[file], 6)
+
+    for link in corpus[page]:
+        print("page!!", page)
+        print("has link to", link)
+        print("this page has this many links! len(corpus[page])", len(corpus[page]))
+        probabilities[link] += damping_factor/len(corpus[page])
+        probabilities[link] = round(probabilities[link], 6)
+        print("rounded probabilities", probabilities[link])
+
+
+    return probabilities
 
 
 
@@ -88,7 +115,37 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    # initialize set of samples with random page
+
+    page = list(corpus.keys())
+    page = random.choice(page)
+
+    # empty list to store pages
+    data = []
+    data.append(page)
+
+
+    # use transition model to determine page to jump to
+    for i in range(n):
+
+        model = transition_model(corpus, page, damping_factor)
+        next_pages = list(model.keys())
+        probabilities = list(model.values())
+        next_page = random.choices(next_pages, probabilities)[0]
+        data.append(next_page)
+
+    print(Counter(data))
+    data = Counter(data)
+    data = dict(data)
+
+    for page in data:
+        print("page in data!:", page)
+        print("data[page]", data[page])
+        data[page] = (data[page] / (n + 1))
+        data[page] = round(data[page], 6)
+        print("data page is now)", data[page])
+    print("data is" ,data)
+    return data
 
 
 def iterate_pagerank(corpus, damping_factor):
@@ -100,6 +157,12 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
+
+
+
+
+
+
     raise NotImplementedError
 
 
