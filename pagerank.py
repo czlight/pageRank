@@ -81,7 +81,7 @@ def transition_model(corpus, page, damping_factor):
             # tested and works as expected!!
             for file in corpus:
                 probabilities[file] = 1 / len(corpus)
-                probabilities[file] = round(probabilities[file], 6)
+                probabilities[file] = round(probabilities[file], 4)
             return(probabilities)
 
     # for each outgoing link, make probability damping factor / (1 - len(corpus))
@@ -91,14 +91,14 @@ def transition_model(corpus, page, damping_factor):
         print("corpus is ", corpus)
         print("corpus[file] is:", corpus[file])
         probabilities[file] = (1 - damping_factor) / len(corpus)
-        probabilities[file] = round(probabilities[file], 6)
+        probabilities[file] = round(probabilities[file], 4)
 
     for link in corpus[page]:
         print("page!!", page)
         print("has link to", link)
         print("this page has this many links! len(corpus[page])", len(corpus[page]))
         probabilities[link] += damping_factor/len(corpus[page])
-        probabilities[link] = round(probabilities[link], 6)
+        probabilities[link] = round(probabilities[link], 4)
         print("rounded probabilities", probabilities[link])
 
 
@@ -141,8 +141,8 @@ def sample_pagerank(corpus, damping_factor, n):
     for page in data:
         print("page in data!:", page)
         print("data[page]", data[page])
-        data[page] = (data[page] / (n + 1))
-        data[page] = round(data[page], 6)
+        data[page] = (data[page] / n)
+        data[page] = round(data[page], 4)
         print("data page is now)", data[page])
     print("data is" ,data)
     return data
