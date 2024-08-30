@@ -87,6 +87,7 @@ def transition_model(corpus, page, damping_factor):
         print("page is", page)
         print("corpus is ", corpus)
         print("corpus[file] is:", corpus[file])
+        probabilities[file] = (1 - damping_factor) / len(corpus)
         probabilities[file] = round(probabilities[file], 4)
 
     for link in corpus[page]:
@@ -96,13 +97,7 @@ def transition_model(corpus, page, damping_factor):
         probabilities[link] += damping_factor/len(corpus[page])
         print("rounded probabilities", probabilities[link])
 
-    total = sum(probabilities.values())
-    for item in probabilities:
-        probabilities[item] /= total
-        probabilities[item] = round(probabilities[item], 4)
-
     return probabilities
-
 
 
 def sample_pagerank(corpus, damping_factor, n):
@@ -145,6 +140,7 @@ def sample_pagerank(corpus, damping_factor, n):
         print("data page is now)", data[page])
     print("data is" ,data)
     return data
+
 
 
 def iterate_pagerank(corpus, damping_factor):
