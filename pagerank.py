@@ -72,10 +72,7 @@ def transition_model(corpus, page, damping_factor):
     probabilities = dict()
 
     if page in corpus:
-        print("outer loop page is", page)
-        print("outer loop corpus is ", corpus)
         if not corpus[page]:
-            print("not corpus[page] (i.e., no outgoing links for page: ", page)
             # page has no outgoing links
             # return all pages in corpus with equal probability
             # tested and works as expected!!
@@ -90,7 +87,6 @@ def transition_model(corpus, page, damping_factor):
         print("page is", page)
         print("corpus is ", corpus)
         print("corpus[file] is:", corpus[file])
-        probabilities[file] = (1 - damping_factor) / len(corpus)
         probabilities[file] = round(probabilities[file], 4)
 
     for link in corpus[page]:
@@ -98,9 +94,12 @@ def transition_model(corpus, page, damping_factor):
         print("has link to", link)
         print("this page has this many links! len(corpus[page])", len(corpus[page]))
         probabilities[link] += damping_factor/len(corpus[page])
-        probabilities[link] = round(probabilities[link], 4)
         print("rounded probabilities", probabilities[link])
 
+    total = sum(probabilities.values())
+    for item in probabilities:
+        probabilities[item] /= total
+        probabilities[item] = round(probabilities[item], 4)
 
     return probabilities
 
