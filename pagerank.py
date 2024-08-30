@@ -2,6 +2,7 @@ import os
 import random
 import re
 import sys
+from collections import Counter
 
 DAMPING = 0.85
 SAMPLES = 10000
@@ -10,11 +11,21 @@ SAMPLES = 10000
 def main():
     if len(sys.argv) != 2:
         sys.exit("Usage: python pagerank.py corpus")
+    # crawl function parses html files in directory and returns
+    # a dictionary representing the corpus. Keys represent pages
+    # and values area a set of all the pages linked to by the key
+    # e.g., {"1.html": {"2.html" , "3.html"}} means page 1 links to pages 2 & 3
     corpus = crawl(sys.argv[1])
+
+    # sample_pagerank function's purpose is to estimate PageRank of each page by sampling
+    # returns a dictionary where keys are page name and values are page's PageRank(0 - 1)
     ranks = sample_pagerank(corpus, DAMPING, SAMPLES)
     print(f"PageRank Results from Sampling (n = {SAMPLES})")
     for page in sorted(ranks):
         print(f"  {page}: {ranks[page]:.4f}")
+
+    # iterate_pagerank calculates PageRank but using the iterative formula
+    # method instead of sampling. return format is same as dict sample_pagerank function
     ranks = iterate_pagerank(corpus, DAMPING)
     print(f"PageRank Results from Iteration")
     for page in sorted(ranks):
@@ -57,7 +68,36 @@ def transition_model(corpus, page, damping_factor):
     linked to by `page`. With probability `1 - damping_factor`, choose
     a link at random chosen from all pages in the corpus.
     """
-    raise NotImplementedError
+    # initialize empty dictionary
+    probabilities = dict()
+
+    if page in corpus:
+        if not corpus[page]:
+            # page has no outgoing links
+            # return all pages in corpus with equal probability
+            # tested and works as expected!!
+            for file in corpus:
+                probabilities[file] = 1 / len(corpus)
+                probabilities[file] = round(probabilities[file], 4)
+            return(probabilities)
+
+    # for each outgoing link, make probability damping factor / (1 - len(corpus))
+    # PLUS 1 - damping factor / len(corpus)
+    for file in corpus:
+        print("page is", page)
+        print("corpus is ", corpus)
+        print("corpus[file] is:", corpus[file])
+        probabilities[file] = (1 - damping_factor) / len(corpus)
+        probabilities[file] = round(probabilities[file], 4)
+
+    for link in corpus[page]:
+        print("page!!", page)
+        print("has link to", link)
+        print("this page has this many links! len(corpus[page])", len(corpus[page]))
+        probabilities[link] += damping_factor/len(corpus[page])
+        print("rounded probabilities", probabilities[link])
+
+    return probabilities
 
 
 def sample_pagerank(corpus, damping_factor, n):
@@ -69,7 +109,44 @@ def sample_pagerank(corpus, damping_factor, n):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
-    raise NotImplementedError
+    # initialize set of samples with random page
+
+    page = list(corpus.keys())
+    page = random.choice(page)
+
+    # empty list to store pages
+    data = []
+    data.append(page)
+
+
+    # use transition model to determine page to jump to
+    for i in range(n):
+
+        model = transition_model(corpus, page, damping_factor)
+        next_pages = list(model.keys())
+        probabilities = list(model.values())
+        next_page = random.choices(next_pages, probabilities)[0]
+        page = next_page
+        data.append(next_page)
+
+    print(Counter(data))
+    data = Counter(data)
+    data = dict(data)
+
+    for page in data:
+        print("page in data!:", page)
+        print("data[page]", data[page])
+        data[page] = (data[page] / n)
+        # data[page] = round(data[page], 4)
+        print("data page is now)", data[page])
+    print("data is" ,data)
+
+    total = sum(data.values())
+    for item in data:
+        data[item] /= total
+        data[item] = round(data[item], 4)
+    return data
+
 
 
 def iterate_pagerank(corpus, damping_factor):
@@ -81,6 +158,12 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
+
+
+
+
+
+
     raise NotImplementedError
 
 
