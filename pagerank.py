@@ -126,6 +126,7 @@ def sample_pagerank(corpus, damping_factor, n):
         next_pages = list(model.keys())
         probabilities = list(model.values())
         next_page = random.choices(next_pages, probabilities)[0]
+        page = next_page
         data.append(next_page)
 
     print(Counter(data))
@@ -136,9 +137,14 @@ def sample_pagerank(corpus, damping_factor, n):
         print("page in data!:", page)
         print("data[page]", data[page])
         data[page] = (data[page] / n)
-        data[page] = round(data[page], 4)
+        # data[page] = round(data[page], 4)
         print("data page is now)", data[page])
     print("data is" ,data)
+
+    total = sum(data.values())
+    for item in data:
+        data[item] /= total
+        data[item] = round(data[item], 4)
     return data
 
 

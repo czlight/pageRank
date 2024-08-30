@@ -15,7 +15,7 @@ def main():
     corpus = crawl(sys.argv[1])
 
     # page4 has no outgoing links
-    # probabilities = transition_model(corpus, "3.html", DAMPING)
+    #probabilities = transition_model(corpus, "3.html", DAMPING)
     #print("testFile.py probabilities is: ",probabilities)
 
     sample_pagerank(corpus, DAMPING, SAMPLES)
