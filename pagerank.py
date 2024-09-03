@@ -158,13 +158,75 @@ def iterate_pagerank(corpus, damping_factor):
     their estimated PageRank value (a value between 0 and 1). All
     PageRank values should sum to 1.
     """
+    # initialize each page an equal probability
+    data = dict()
+    for file in corpus:
+        data[file] = 1 / len(corpus)
+    print("data - probabilities are equal", data)
+
+    # pageRank recursive mathematical expression
+    # PR(p) = (1 - d)/n + d * summation PR(i)/ NumLinks(i)
+    # i = each possible page that links to page p
+    # NumLinks(i) = # of links on page i (we travel to any of a page's links with equal probability)
+    # PR(i) = pageRank of page i, representing the probability we are on page i at any given time
+    # n = possible pages in corpus
+
+    # iterate over every page in corpus
+    i = 0
+    condition1 = (1 - damping_factor) / len(corpus)
+    #
+    # while(True):
+    for a in range(2000):
+        for page in corpus:
+            i+= 1
+            print("outer loop. let's start! loop::", i, "page::" , page)
+            print("data list should be updated, data is: ", data)
+
+            # 1. find possible pages i that link to page p. for each page get:
+            # 2. it's page rank (i.e., probability)
+            # 3. number of links on that page
+            j = 0
+            summ = 0
+            for key in corpus:
+                j+=1
+                print("nested loop#:", j , "looking at key::", key, "in corpus::", corpus)
+                # look for values (i.e., links to page)
+                for value in corpus[key]:
+                    print("value is:", value)
+                    print("key is :", key)
+                    print("page we're looking at is:", page)
+
+                    # check for page i that links to page p
+
+                    k = 0
+                    if value == page:
+                        k += 1
+                        # found a page i that links to page p
+                        print("found page in loop", k, "this key", key, " has link to page",  page)
+                        probability_i = data[key]
+                        print("probability of i:", probability_i)
+                        num_links = len(corpus[key])
+                        print("number of links for i is", num_links)
+                        summ += (probability_i / num_links)
+                        print("sum is now", summ)
+            condition2 = damping_factor * summ
+            print("condition2", condition2)
+            print("data[page] before damping", data[page])
+            data[page] = condition1 + condition2
+            print("data[page] AFTER damping", data[page])
+        total = sum(data.values())
+        for item in data:
+            data[item] /= total
+            data[item] = round(data[item], 4)
+        print("data is", data)
+    return data
+
+        # break while(True) loop when pageRank values, for each page, from current iteration
+        # differ by less than 0.001. Afterwards, return data (at same level (and thus outside) of while loop)
 
 
 
 
-
-
-    raise NotImplementedError
 
 
 if __name__ == "__main__":

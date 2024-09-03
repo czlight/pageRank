@@ -18,7 +18,9 @@ def main():
     #probabilities = transition_model(corpus, "3.html", DAMPING)
     #print("testFile.py probabilities is: ",probabilities)
 
-    sample_pagerank(corpus, DAMPING, SAMPLES)
+    #sample_pagerank(corpus, DAMPING, SAMPLES)
+
+    iterate_pagerank(corpus, DAMPING)
 
 
 
